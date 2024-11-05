@@ -19,7 +19,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
         }
         h1 {
@@ -33,7 +33,7 @@
             display: block;
             margin-top: 15px;
         }
-        input[type="number"], input[type="text"] {
+        input[type="number"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -74,23 +74,6 @@
             background-color: #fafafa;
             color: #555;
         }
-        .key {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #777;
-        }
-        .tier-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .remove-tier {
-            background-color: #f44336;
-            color: white;
-        }
-        .remove-tier:hover {
-            background-color: #e53935;
-        }
     </style>
 </head>
 <body>
@@ -106,40 +89,32 @@
 
     <button onclick="calculateFees()">Calculate Fees</button>
 
-    <div class="key">Key: Maker = Limit Order | Taker = Market Order</div>
-
-    <table id="feeTable">
+    <table>
         <thead>
             <tr>
                 <th>Tier</th>
-                <th>Limit Fee ($)</th>
-                <th>Market Fee ($)</th>
-                <th>Actions</th>
+                <th>Maker Fee ($)</th>
+                <th>Taker Fee ($)</th>
             </tr>
         </thead>
         <tbody>
-            <tr class="tier-row">
-                <td><input type="text" value="Tier 1 (0.60% / 1.20%)" readonly></td>
-                <td id="tier1Limit">-</td>
-                <td id="tier1Market">-</td>
-                <td><button class="remove-tier" onclick="removeTier(this)">Remove</button></td>
+            <tr>
+                <td>Tier 1 (0.60% / 1.20%)</td>
+                <td id="tier1Maker">-</td>
+                <td id="tier1Taker">-</td>
             </tr>
-            <tr class="tier-row">
-                <td><input type="text" value="Tier 2 (0.35% / 0.75%)" readonly></td>
-                <td id="tier2Limit">-</td>
-                <td id="tier2Market">-</td>
-                <td><button class="remove-tier" onclick="removeTier(this)">Remove</button></td>
+            <tr>
+                <td>Tier 2 (0.35% / 0.75%)</td>
+                <td id="tier2Maker">-</td>
+                <td id="tier2Taker">-</td>
             </tr>
-            <tr class="tier-row">
-                <td><input type="text" value="Tier 3 (0.25% / 0.40%)" readonly></td>
-                <td id="tier3Limit">-</td>
-                <td id="tier3Market">-</td>
-                <td><button class="remove-tier" onclick="removeTier(this)">Remove</button></td>
+            <tr>
+                <td>Tier 3 (0.25% / 0.40%)</td>
+                <td id="tier3Maker">-</td>
+                <td id="tier3Taker">-</td>
             </tr>
         </tbody>
     </table>
-    
-    <button onclick="addTier()">Add Tier</button>
 </div>
 
 <script>
@@ -153,37 +128,22 @@
         }
         
         const tiers = [
-            { limit: 0.60, market: 1.20 },
-            { limit: 0.35, market: 0.75 },
-            { limit: 0.25, market: 0.40 }
+            { maker: 0.60, taker: 1.20 },
+            { maker: 0.35, taker: 0.75 },
+            { maker: 0.25, taker: 0.40 }
         ];
 
-        for (let i = 0; i < tiers.length; i++) {
-            document.getElementById(`tier${i + 1}Limit`).textContent = calculateFee(positionSize, price, tiers[i].limit);
-            document.getElementById(`tier${i + 1}Market`).textContent = calculateFee(positionSize, price, tiers[i].market);
-        }
+        document.getElementById("tier1Maker").textContent = calculateFee(positionSize, price, tiers[0].maker);
+        document.getElementById("tier1Taker").textContent = calculateFee(positionSize, price, tiers[0].taker);
+        document.getElementById("tier2Maker").textContent = calculateFee(positionSize, price, tiers[1].maker);
+        document.getElementById("tier2Taker").textContent = calculateFee(positionSize, price, tiers[1].taker);
+        document.getElementById("tier3Maker").textContent = calculateFee(positionSize, price, tiers[2].maker);
+        document.getElementById("tier3Taker").textContent = calculateFee(positionSize, price, tiers[2].taker);
     }
 
     function calculateFee(positionSize, price, feePercentage) {
         const fee = positionSize * price * (feePercentage / 100);
         return fee ? `$${fee.toFixed(2)}` : "-";
-    }
-
-    function addTier() {
-        const newRow = document.createElement("tr");
-        newRow.className = "tier-row";
-        newRow.innerHTML = `
-            <td><input type="text" placeholder="New Tier Name"></td>
-            <td>-</td>
-            <td>-</td>
-            <td><button class="remove-tier" onclick="removeTier(this)">Remove</button></td>
-        `;
-        document.querySelector("#feeTable tbody").appendChild(newRow);
-    }
-
-    function removeTier(button) {
-        const row = button.parentNode.parentNode;
-        row.parentNode.removeChild(row);
     }
 </script>
 
