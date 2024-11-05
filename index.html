@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Fee Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-top: 15px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f0f0f0;
+            color: #333;
+            font-weight: bold;
+        }
+        td {
+            background-color: #fafafa;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Crypto Fee Calculator</h1>
+
+    <label for="positionSize">Position Size (Units):</label>
+    <input type="number" id="positionSize" placeholder="Enter position size">
+
+    <label for="price">Price per Unit ($):</label>
+    <input type="number" id="price" placeholder="Enter price per unit">
+
+    <button onclick="calculateFees()">Calculate Fees</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tier</th>
+                <th>Maker Fee ($)</th>
+                <th>Taker Fee ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Tier 1 (0.60% / 1.20%)</td>
+                <td id="tier1Maker">-</td>
+                <td id="tier1Taker">-</td>
+            </tr>
+            <tr>
+                <td>Tier 2 (0.35% / 0.75%)</td>
+                <td id="tier2Maker">-</td>
+                <td id="tier2Taker">-</td>
+            </tr>
+            <tr>
+                <td>Tier 3 (0.25% / 0.40%)</td>
+                <td id="tier3Maker">-</td>
+                <td id="tier3Taker">-</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function calculateFees() {
+        const positionSize = parseFloat(document.getElementById("positionSize").value);
+        const price = parseFloat(document.getElementById("price").value);
+
+        if (isNaN(positionSize) || isNaN(price)) {
+            alert("Please enter both position size and price.");
+            return;
+        }
+        
+        const tiers = [
+            { maker: 0.60, taker: 1.20 },
+            { maker: 0.35, taker: 0.75 },
+            { maker: 0.25, taker: 0.40 }
+        ];
+
+        document.getElementById("tier1Maker").textContent = calculateFee(positionSize, price, tiers[0].maker);
+        document.getElementById("tier1Taker").textContent = calculateFee(positionSize, price, tiers[0].taker);
+        document.getElementById("tier2Maker").textContent = calculateFee(positionSize, price, tiers[1].maker);
+        document.getElementById("tier2Taker").textContent = calculateFee(positionSize, price, tiers[1].taker);
+        document.getElementById("tier3Maker").textContent = calculateFee(positionSize, price, tiers[2].maker);
+        document.getElementById("tier3Taker").textContent = calculateFee(positionSize, price, tiers[2].taker);
+    }
+
+    function calculateFee(positionSize, price, feePercentage) {
+        const fee = positionSize * price * (feePercentage / 100);
+        return fee ? `$${fee.toFixed(2)}` : "-";
+    }
+</script>
+
+</body>
+</html>
